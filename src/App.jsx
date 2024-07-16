@@ -1,13 +1,15 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { XMLParser } from "fast-xml-parser";
 import { Card, CardContent, CardHeader } from "./components/ui/card";
 import { Button } from "./components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./components/ui/tabs";
 import { Light as SyntaxHighlighter } from "react-syntax-highlighter";
 import xml from "react-syntax-highlighter/dist/esm/languages/hljs/xml";
+import json from "react-syntax-highlighter/dist/esm/languages/hljs/json";
 import { docco } from "react-syntax-highlighter/dist/esm/styles/hljs";
 
 SyntaxHighlighter.registerLanguage("xml", xml);
+SyntaxHighlighter.registerLanguage("json", json);
 
 const defaultXML = `<!--Created by Vision4D 4.1.2 tags/4.1.2-release^0@98c73da4661fb18d597af2e61196cc33ab6a833f-->
 <pipeline version="4.0" description="Automatically detect large objects having regular or irregular borders" url="arivis-vision4d-manuals:How to Detect Big Structures Auto (Sample Pipeline).pdf" created="0001-01-01T00:00:00" modified="2023-12-28T15:28:04.7734903+01:00">
@@ -95,6 +97,25 @@ const XMLPipelineVisualizer = () => {
     reader.readAsText(file);
   };
 
+  const tryParseJSON = (str) => {
+    try {
+      return JSON.parse(str);
+    } catch (e) {
+      return str;
+    }
+  };
+
+  const renderJSONContent = (content) => {
+    const parsedContent = tryParseJSON(content);
+    return (
+      <SyntaxHighlighter language="json" style={docco}>
+        {typeof parsedContent === "object"
+          ? JSON.stringify(parsedContent, null, 2)
+          : content}
+      </SyntaxHighlighter>
+    );
+  };
+
   const renderOperation = (operation) => (
     <Card key={operation["@_id"]} className="mb-4">
       <CardHeader>
@@ -108,19 +129,13 @@ const XMLPipelineVisualizer = () => {
             <TabsTrigger value="settings">Settings</TabsTrigger>
           </TabsList>
           <TabsContent value="inputs">
-            <pre className="bg-gray-100 p-2 rounded">
-              {JSON.stringify(operation.inputs, null, 2)}
-            </pre>
+            {renderJSONContent(operation.inputs)}
           </TabsContent>
           <TabsContent value="outputs">
-            <pre className="bg-gray-100 p-2 rounded">
-              {JSON.stringify(operation.outputs, null, 2)}
-            </pre>
+            {renderJSONContent(operation.outputs)}
           </TabsContent>
           <TabsContent value="settings">
-            <pre className="bg-gray-100 p-2 rounded">
-              {JSON.stringify(operation.settings, null, 2)}
-            </pre>
+            {renderJSONContent(operation.settings)}
           </TabsContent>
         </Tabs>
       </CardContent>
