@@ -1,9 +1,13 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { XMLParser } from "fast-xml-parser";
 import { Card, CardContent, CardHeader } from "./components/ui/card";
 import { Button } from "./components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./components/ui/tabs";
+import { Light as SyntaxHighlighter } from "react-syntax-highlighter";
+import xml from "react-syntax-highlighter/dist/esm/languages/hljs/xml";
+import { docco } from "react-syntax-highlighter/dist/esm/styles/hljs";
 
+SyntaxHighlighter.registerLanguage("xml", xml);
 const defaultXML = `<!--Created by Vision4D 4.1.2 tags/4.1.2-release^0@98c73da4661fb18d597af2e61196cc33ab6a833f-->
 <pipeline version="4.0" description="Automatically detect large objects having regular or irregular borders" url="arivis-vision4d-manuals:How to Detect Big Structures Auto (Sample Pipeline).pdf" created="0001-01-01T00:00:00" modified="2023-12-28T15:28:04.7734903+01:00">
   <operations>
@@ -152,41 +156,44 @@ const XMLPipelineVisualizer = () => {
       <div className="grid grid-cols-2 gap-4">
         <div>
           <h2 className="text-xl font-semibold mb-2">XML Content</h2>
-          <textarea
-            value={xmlContent}
-            onChange={(e) => setXmlContent(e.target.value)}
-            className="w-full h-64 p-2 border rounded"
-          />
+          <div className="h-[600px] overflow-auto">
+            <SyntaxHighlighter language="xml" style={docco} className="h-full">
+              {xmlContent}
+            </SyntaxHighlighter>
+          </div>
         </div>
         <div>
           <h2 className="text-xl font-semibold mb-2">Parsed Data</h2>
-          {parsedData && (
-            <div>
-              <h3 className="text-lg font-semibold mb-2">
-                Pipeline Information
-              </h3>
-              <Card className="mb-4">
-                <CardContent>
-                  <p>
-                    <strong>Version:</strong> {parsedData.pipeline["@_version"]}
-                  </p>
-                  <p>
-                    <strong>Description:</strong>{" "}
-                    {parsedData.pipeline["@_description"]}
-                  </p>
-                  <p>
-                    <strong>URL:</strong> {parsedData.pipeline["@_url"]}
-                  </p>
-                  <p>
-                    <strong>Modified:</strong>{" "}
-                    {parsedData.pipeline["@_modified"]}
-                  </p>
-                </CardContent>
-              </Card>
-              <h3 className="text-lg font-semibold mb-2">Operations</h3>
-              {renderOperations()}
-            </div>
-          )}
+          <div className="h-[600px] overflow-auto">
+            {parsedData && (
+              <div>
+                <h3 className="text-lg font-semibold mb-2">
+                  Pipeline Information
+                </h3>
+                <Card className="mb-4">
+                  <CardContent>
+                    <p>
+                      <strong>Version:</strong>{" "}
+                      {parsedData.pipeline["@_version"]}
+                    </p>
+                    <p>
+                      <strong>Description:</strong>{" "}
+                      {parsedData.pipeline["@_description"]}
+                    </p>
+                    <p>
+                      <strong>URL:</strong> {parsedData.pipeline["@_url"]}
+                    </p>
+                    <p>
+                      <strong>Modified:</strong>{" "}
+                      {parsedData.pipeline["@_modified"]}
+                    </p>
+                  </CardContent>
+                </Card>
+                <h3 className="text-lg font-semibold mb-2">Operations</h3>
+                {renderOperations()}
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>
