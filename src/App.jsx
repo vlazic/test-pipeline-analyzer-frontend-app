@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { XMLParser } from "fast-xml-parser";
 import { Card, CardContent, CardHeader } from "./components/ui/card";
 import { Button } from "./components/ui/button";
@@ -99,7 +99,20 @@ const XMLPipelineVisualizer = () => {
 
   const tryParseJSON = (str) => {
     try {
-      return JSON.parse(str);
+      const parsed = JSON.parse(str);
+      // Additional round of parsing for nested JSON strings
+      if (typeof parsed === "object") {
+        Object.keys(parsed).forEach((key) => {
+          if (typeof parsed[key] === "string") {
+            try {
+              parsed[key] = JSON.parse(parsed[key]);
+            } catch (e) {
+              // If parsing fails, keep the original string
+            }
+          }
+        });
+      }
+      return parsed;
     } catch (e) {
       return str;
     }
@@ -170,7 +183,7 @@ const XMLPipelineVisualizer = () => {
         </Button>
       </div>
       <div className="grid grid-cols-2 gap-4 flex-grow overflow-hidden">
-        <div className="flex flex-col">
+        <div className="flex flex-col overflow-hidden">
           <h2 className="text-xl font-semibold mb-2">XML Content</h2>
           <div className="flex-grow overflow-auto">
             <SyntaxHighlighter language="xml" style={docco} className="h-full">
@@ -178,7 +191,7 @@ const XMLPipelineVisualizer = () => {
             </SyntaxHighlighter>
           </div>
         </div>
-        <div className="flex flex-col">
+        <div className="flex flex-col overflow-hidden">
           <h2 className="text-xl font-semibold mb-2">Parsed Data</h2>
           <div className="flex-grow overflow-auto">
             {parsedData && (
