@@ -8,6 +8,7 @@ import xml from "react-syntax-highlighter/dist/esm/languages/hljs/xml";
 import { docco } from "react-syntax-highlighter/dist/esm/styles/hljs";
 
 SyntaxHighlighter.registerLanguage("xml", xml);
+
 const defaultXML = `<!--Created by Vision4D 4.1.2 tags/4.1.2-release^0@98c73da4661fb18d597af2e61196cc33ab6a833f-->
 <pipeline version="4.0" description="Automatically detect large objects having regular or irregular borders" url="arivis-vision4d-manuals:How to Detect Big Structures Auto (Sample Pipeline).pdf" created="0001-01-01T00:00:00" modified="2023-12-28T15:28:04.7734903+01:00">
   <operations>
@@ -145,7 +146,7 @@ const XMLPipelineVisualizer = () => {
   };
 
   return (
-    <div className="container mx-auto p-4">
+    <div className="container mx-auto p-4 h-screen flex flex-col">
       <h1 className="text-2xl font-bold mb-4">XML Pipeline Visualizer</h1>
       <div className="mb-4">
         <input type="file" onChange={handleFileUpload} className="mb-2" />
@@ -153,18 +154,18 @@ const XMLPipelineVisualizer = () => {
           Reset to Default XML
         </Button>
       </div>
-      <div className="grid grid-cols-2 gap-4">
-        <div>
+      <div className="grid grid-cols-2 gap-4 flex-grow overflow-hidden">
+        <div className="flex flex-col">
           <h2 className="text-xl font-semibold mb-2">XML Content</h2>
-          <div className="h-[600px] overflow-auto">
+          <div className="flex-grow overflow-auto">
             <SyntaxHighlighter language="xml" style={docco} className="h-full">
               {xmlContent}
             </SyntaxHighlighter>
           </div>
         </div>
-        <div>
+        <div className="flex flex-col">
           <h2 className="text-xl font-semibold mb-2">Parsed Data</h2>
-          <div className="h-[600px] overflow-auto">
+          <div className="flex-grow overflow-auto">
             {parsedData && (
               <div>
                 <h3 className="text-lg font-semibold mb-2">
